@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useSpring, useTransform } from "framer-motion";
 import { useLenisScrollProgress } from "@/components/scroll/LenisSmoothScroll";
 import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
@@ -17,13 +17,12 @@ const particles = [
 ];
 
 export default function GlobalBackground() {
-  const lenisScroll = useLenisScrollProgress();
-  const { scrollYProgress: nativeScrollProgress } = useScroll();
+  const ctx = useLenisScrollProgress();
   const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 });
 
-  const rawProgress = lenisScroll?.scrollProgress ?? nativeScrollProgress;
+  const rawProgress = ctx?.scrollProgress;
 
-  const scrollProgress = useSpring(rawProgress, {
+  const scrollProgress = useSpring(rawProgress ?? 0, {
     stiffness: 60,
     damping: 24,
     restDelta: 0.001,

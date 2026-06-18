@@ -22,7 +22,7 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-const siteUrl = "https://zeeshan.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) || "https://zeeshan.dev";
 
 export const metadata = {
   metadataBase: new URL(siteUrl),

@@ -17,10 +17,6 @@ const socialLinks = [
 ];
 
 const Contact = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
   return (
     <section id="contact" className="relative scroll-mt-28 px-4 py-20 md:px-6 md:py-24">
       <div className="mx-auto w-full max-w-7xl">
@@ -80,31 +76,45 @@ const Contact = () => {
             <div className="group relative overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/45 p-8 backdrop-blur-sm transition-all duration-300 hover:border-zinc-700">
               <div className="pointer-events-none absolute -inset-px bg-linear-to-r from-transparent via-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <h3 className="mb-6 text-xl font-bold text-white">Send a Message</h3>
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const f = new FormData(e.target);
+                  window.location.href = `mailto:zeeshan7240054@gmail.com?subject=${encodeURIComponent(f.get("subject") || "Contact Form Message")}&body=${encodeURIComponent(`Name: ${f.get("name")}\nEmail: ${f.get("email")}\n\nMessage:\n${f.get("message")}`)}`;
+                }}
+                className="space-y-5"
+              >
                 <div className="grid gap-5 sm:grid-cols-2">
                   <input
                     type="text"
+                    name="name"
                     placeholder="Your Name"
                     aria-label="Your Name"
+                    required
                     className="w-full rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors duration-300 focus:border-[#4E8F63]"
                   />
                   <input
                     type="email"
+                    name="email"
                     placeholder="Your Email"
                     aria-label="Your Email"
+                    required
                     className="w-full rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors duration-300 focus:border-[#4E8F63]"
                   />
                 </div>
                 <input
                   type="text"
+                  name="subject"
                   placeholder="Subject"
                   aria-label="Subject"
                   className="w-full rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors duration-300 focus:border-[#4E8F63]"
                 />
                 <textarea
+                  name="message"
                   placeholder="Your Message"
                   aria-label="Your Message"
                   rows={5}
+                  required
                   className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors duration-300 focus:border-[#4E8F63]"
                 />
                 <motion.button

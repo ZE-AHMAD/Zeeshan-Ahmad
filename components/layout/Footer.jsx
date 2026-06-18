@@ -7,15 +7,15 @@ import { Mail } from "lucide-react";
 import { FiHome, FiZap, FiFolder } from "react-icons/fi";
 
 const navLinks = [
-  { icon: FiHome, label: "Home", href: "#home" },
-  { icon: FiZap, label: "Skills", href: "#skills" },
-  { icon: FiFolder, label: "Projects", href: "#projects" },
+  { icon: FiHome, label: "Home", href: "/" },
+  { icon: FiZap, label: "Skills", href: "/#skills" },
+  { icon: FiFolder, label: "Projects", href: "/projects" },
 ];
 
 const socialLinks = [
   { icon: FaGithub, href: "#", label: "GitHub" },
   { icon: FaLinkedin, href: "#", label: "LinkedIn" },
-  { icon: Mail, href: "#", label: "Email", isMail: true },
+  { icon: Mail, href: "mailto:zeeshan7240054@gmail.com", label: "Email", isMail: true },
 ];
 
 const Footer = () => {

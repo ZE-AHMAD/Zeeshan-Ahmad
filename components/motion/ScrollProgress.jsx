@@ -1,44 +1,35 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useUltraScroll } from "@/app/Frontend Controller/useUltraScroll";
+import { useLenisScrollProgress } from "@/components/scroll/LenisSmoothScroll";
 
 export default function ScrollProgress() {
   const barRef = useRef(null);
   const glowRef = useRef(null);
-
-  const scroll = useUltraScroll();
+  const { scrollProgress } = useLenisScrollProgress() ?? {};
 
   useEffect(() => {
-    let rafId;
+    if (!scrollProgress) return;
 
-    const animate = () => {
-      if (!document.hidden) {
-        const p = scroll.current.progress;
-        const v = scroll.current.velocity;
+    const update = (latest) => {
+      const p = latest * 100;
 
-        if (barRef.current) {
-          barRef.current.style.width = `${p}%`;
-        }
-
-        const glow = Math.min(v * 0.8, 25);
-
-        if (glowRef.current) {
-          glowRef.current.style.opacity = 0.3 + glow / 50;
-          glowRef.current.style.transform =
-            scroll.current.direction === 1
-              ? "scaleX(1.02)"
-              : "scaleX(0.98)";
-        }
+      if (barRef.current) {
+        barRef.current.style.width = `${p}%`;
       }
 
-      rafId = requestAnimationFrame(animate);
+      if (glowRef.current) {
+        glowRef.current.style.transform =
+          p > (glowRef.current.dataset.prev ?? 0)
+            ? "scaleX(1.02)"
+            : "scaleX(0.98)";
+        glowRef.current.dataset.prev = p;
+      }
     };
 
-    animate();
-
-    return () => cancelAnimationFrame(rafId);
-  }, [scroll]);
+    const unsubscribe = scrollProgress.on("change", update);
+    return () => unsubscribe();
+  }, [scrollProgress]);
 
   return (
     <div className="fixed top-0 left-0 w-full h-[3px] z-[9999] bg-zinc-900/40 overflow-hidden">
