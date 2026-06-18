@@ -1,13 +1,9 @@
 "use client";
 
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { useLenisScrollProgress } from "@/components/scroll/LenisSmoothScroll";
 import { useEffect, useState, useMemo } from "react";
+import Image from "next/image";
 
 const particles = [
   { id: 0, x: 15, y: 8, size: 2.5, duration: 12, delay: 2, drift: 12, distance: 50 },
@@ -44,11 +40,18 @@ export default function GlobalBackground() {
   const radialStrength = useTransform(scrollProgress, [0, 1], [0, 0.3]);
 
   useEffect(() => {
+    let rafId;
     const handleMouse = (e) => {
-      setMouse({ x: e.clientX / innerWidth, y: e.clientY / innerHeight });
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setMouse({ x: e.clientX / innerWidth, y: e.clientY / innerHeight });
+      });
     };
-    addEventListener("mousemove", handleMouse);
-    return () => removeEventListener("mousemove", handleMouse);
+    addEventListener("mousemove", handleMouse, { passive: true });
+    return () => {
+      removeEventListener("mousemove", handleMouse);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const glowStyle = useMemo(
@@ -67,17 +70,16 @@ export default function GlobalBackground() {
         style={glowStyle}
       />
 
-      <motion.div
+      <div
         className="absolute bottom-[10%] left-1/2 h-[45vh] w-[50vw] -translate-x-1/2 rounded-full"
         style={{
           background: "radial-gradient(ellipse at center, rgba(78, 143, 99, 0.06), transparent 70%)",
+          animation: "breathe 6s ease-in-out infinite",
         }}
-        animate={{ opacity: [0.3, 0.7, 0.3] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {particles.map((p) => (
-        <motion.div
+        <div
           key={p.id}
           className="absolute rounded-full bg-emerald-400/20"
           style={{
@@ -85,32 +87,27 @@ export default function GlobalBackground() {
             bottom: `${p.y}%`,
             width: p.size,
             height: p.size,
-          }}
-          animate={{
-            y: [0, -p.distance],
-            x: [0, p.drift],
-            opacity: [0, 0.4, 0],
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: "linear",
+            "--rise": `${-p.distance}px`,
+            "--drift": `${p.drift}px`,
+            animation: `particle-rise ${p.duration}s ${p.delay}s linear infinite`,
           }}
         />
       ))}
 
       <motion.div
         className="absolute inset-0 flex items-end justify-center"
-        animate={{ y: [0, -5, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        style={{ x: xImage, y: yImage, scale, rotate, opacity, filter: blurFilter }}
       >
-        <motion.img
-          src="/Ninja.png"
-          alt=""
-          style={{ x: xImage, y: yImage, scale, rotate, opacity, filter: blurFilter }}
-          className="h-[50vh] w-auto max-w-[90vw] origin-bottom object-contain object-bottom sm:h-[58vh] md:h-[68vh] lg:max-h-[720px]"
-        />
+        <div className="relative h-[50vh] w-auto max-w-[90vw] aspect-[5/7] sm:h-[58vh] md:h-[68vh] lg:max-h-[720px]">
+          <Image
+            src="/Ninja.png"
+            alt=""
+            fill
+            priority
+            className="object-contain object-bottom"
+            sizes="(max-width: 768px) 90vw, 50vw"
+          />
+        </div>
       </motion.div>
 
       <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/20 to-black/80" />

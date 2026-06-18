@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
 import Reveal from "@/components/motion/Reveal";
 import {
     SiHtml5,
@@ -18,6 +17,19 @@ import {
 
 const SkillCard = ({ skill, index }) => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0, active: false });
+    const [isVisible, setIsVisible] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.unobserve(el); } },
+            { threshold: 0.1 }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
 
     const handleMouseMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -33,15 +45,16 @@ const SkillCard = ({ skill, index }) => {
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.05 }}
+        <div
+            ref={ref}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            whileHover={{ y: -4 }}
-            className="group relative overflow-hidden rounded-2xl border border-zinc-800/90 bg-zinc-900/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-zinc-700"
+            className="group relative overflow-hidden rounded-2xl border border-zinc-800/90 bg-zinc-900/50 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700"
+            style={{
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? "translateY(0)" : "translateY(30px)",
+                transition: `opacity 0.5s ${index * 0.05}s ease-out, transform 0.5s ${index * 0.05}s ease-out`,
+            }}
         >
             <div
                 className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -75,18 +88,18 @@ const SkillCard = ({ skill, index }) => {
                         <span className="text-xs font-bold text-white">{skill.level}%</span>
                     </div>
                     <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                        <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${skill.level}%` }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, delay: 0.3 + index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                        <div
                             className="h-full rounded-full"
-                            style={{ backgroundColor: skill.color }}
+                            style={{
+                                width: isVisible ? `${skill.level}%` : "0%",
+                                backgroundColor: skill.color,
+                                transition: `width 1s ${0.3 + index * 0.05}s cubic-bezier(0.22, 1, 0.36, 1)`,
+                            }}
                         />
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 
@@ -136,14 +149,9 @@ const Skills = () => {
                 </Reveal>
 
                 <div className="relative mt-12 w-full overflow-hidden mask-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-                    <motion.div
+                    <div
                         className="flex w-max gap-6 overflow-hidden py-2 md:gap-8"
-                        animate={{ x: ["0%", "-25%"] }}
-                        transition={{
-                            duration: 28,
-                            repeat: Infinity,
-                            ease: "linear",
-                        }}
+                        style={{ animation: "marquee 28s linear infinite" }}
                     >
                         {marqueeItems.map((tech, index) => (
                             <div
@@ -155,7 +163,7 @@ const Skills = () => {
                                 <span>{tech.name}</span>
                             </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
 
                 <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -183,10 +183,9 @@ const AboutPage = () => {
           </Reveal>
 
           <div className="relative w-full overflow-hidden mask-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-            <motion.div
+            <div
               className="flex w-max gap-6 overflow-hidden py-2 md:gap-8"
-              animate={{ x: ["0%", "-25%"] }}
-              transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+              style={{ animation: "marquee 28s linear infinite" }}
             >
               {Array.from({ length: 4 }, () => techStack).flat().map((tech, index) => (
                 <div
@@ -198,7 +197,7 @@ const AboutPage = () => {
                   <span>{tech.name}</span>
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>

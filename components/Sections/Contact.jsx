@@ -85,21 +85,25 @@ const Contact = () => {
                   <input
                     type="text"
                     placeholder="Your Name"
+                    aria-label="Your Name"
                     className="w-full rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors duration-300 focus:border-[#4E8F63]"
                   />
                   <input
                     type="email"
                     placeholder="Your Email"
+                    aria-label="Your Email"
                     className="w-full rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors duration-300 focus:border-[#4E8F63]"
                   />
                 </div>
                 <input
                   type="text"
                   placeholder="Subject"
+                  aria-label="Subject"
                   className="w-full rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors duration-300 focus:border-[#4E8F63]"
                 />
                 <textarea
                   placeholder="Your Message"
+                  aria-label="Your Message"
                   rows={5}
                   className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors duration-300 focus:border-[#4E8F63]"
                 />

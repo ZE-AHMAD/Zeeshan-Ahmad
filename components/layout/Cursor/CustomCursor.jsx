@@ -6,7 +6,7 @@ import { motion, useSpring, useMotionValue } from "framer-motion";
 export default function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -18,7 +18,6 @@ export default function CustomCursor() {
   useEffect(() => {
     const hasFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     if (!hasFinePointer) return;
-    setIsVisible(true);
 
     const moveCursor = (e) => {
       cursorX.set(e.clientX);

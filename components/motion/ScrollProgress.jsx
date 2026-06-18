@@ -13,23 +13,23 @@ export default function ScrollProgress() {
     let rafId;
 
     const animate = () => {
-      const p = scroll.current.progress;
-      const v = scroll.current.velocity;
+      if (!document.hidden) {
+        const p = scroll.current.progress;
+        const v = scroll.current.velocity;
 
-      // MAIN BAR
-      if (barRef.current) {
-        barRef.current.style.width = `${p}%`;
-      }
+        if (barRef.current) {
+          barRef.current.style.width = `${p}%`;
+        }
 
-      // GLOW INTENSITY BASED ON SPEED
-      const glow = Math.min(v * 0.8, 25);
+        const glow = Math.min(v * 0.8, 25);
 
-      if (glowRef.current) {
-        glowRef.current.style.opacity = 0.3 + glow / 50;
-        glowRef.current.style.transform =
-          scroll.current.direction === 1
-            ? "scaleX(1.02)"
-            : "scaleX(0.98)";
+        if (glowRef.current) {
+          glowRef.current.style.opacity = 0.3 + glow / 50;
+          glowRef.current.style.transform =
+            scroll.current.direction === 1
+              ? "scaleX(1.02)"
+              : "scaleX(0.98)";
+        }
       }
 
       rafId = requestAnimationFrame(animate);

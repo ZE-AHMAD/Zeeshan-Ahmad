@@ -1,17 +1,16 @@
 "use client";
 
-import { motion, useInView, useAnimation } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const directionVariants = {
-  up: { y: 60 },
-  down: { y: -60 },
-  left: { x: -60 },
-  right: { x: 60 },
-  fade: {},
-  scale: { scale: 0.85 },
-  "zoom-in": { scale: 0.7 },
-  "zoom-out": { scale: 1.3 },
+const dirToTransform = {
+  up: "translateY(60px)",
+  down: "translateY(-60px)",
+  left: "translateX(-60px)",
+  right: "translateX(60px)",
+  fade: "none",
+  scale: "scale(0.85)",
+  "zoom-in": "scale(0.7)",
+  "zoom-out": "scale(1.3)",
 };
 
 export default function Reveal({
@@ -22,35 +21,43 @@ export default function Reveal({
   direction = "up",
   once = true,
   margin = "-10% 0px -15% 0px",
-  spring: useSpring = false,
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { margin, once });
-  const controls = useAnimation();
-  const dir = directionVariants[direction] || directionVariants.up;
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (isInView) {
-      controls.start({
-        opacity: 1,
-        y: 0,
-        x: 0,
-        scale: 1,
-        transition: useSpring
-          ? { type: "spring", stiffness: 90, damping: 22, delay }
-          : { duration, delay, ease: [0.22, 1, 0.36, 1] },
-      });
-    }
-  }, [isInView, controls, useSpring, duration, delay]);
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          if (once) observer.unobserve(el);
+        } else if (!once) {
+          setIsVisible(false);
+        }
+      },
+      { rootMargin: margin }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [once, margin]);
+
+  const transform = dirToTransform[direction] || dirToTransform.up;
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, ...dir }}
-      animate={controls}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "none" : transform,
+        transition: `opacity ${duration}s ${delay}s cubic-bezier(0.22, 1, 0.36, 1), transform ${duration}s ${delay}s cubic-bezier(0.22, 1, 0.36, 1)`,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

@@ -1,43 +1,103 @@
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import ScrollProgress from "@/components/motion/ScrollProgress";
-import SmoothScroll from "@/components/scroll/LenisSmoothScroll";
-import CustomCursor from "@/components/layout/Cursor/CustomCursor";
-import GlobalBackground from "@/components/layout/GlobalBackground";
+import dynamic from "next/dynamic";
+
+const ScrollProgress = dynamic(
+  () => import("@/components/motion/ScrollProgress")
+);
+const SmoothScroll = dynamic(
+  () => import("@/components/scroll/LenisSmoothScroll")
+);
+const CustomCursor = dynamic(
+  () => import("@/components/layout/Cursor/CustomCursor")
+);
+const GlobalBackground = dynamic(
+  () => import("@/components/layout/GlobalBackground")
+);
 
 // Initialize fonts
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
+  display: "swap",
 });
 
-// SEO Metadata (Updated for your portfolio)
+const siteUrl = "https://zeeshan.dev";
+
 export const metadata = {
-  title: "Zeeshan | Frontend Web Developer",
-  description: "Portfolio of Zeeshan, a Frontend Web Developer crafting modern digital experiences with React, Next.js, and Framer Motion.",
-  keywords: ["Web Developer", "Frontend", "React", "Next.js", "Framer Motion", "Portfolio"],
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Zeeshan | Frontend Web Developer",
+    template: "%s | Zeeshan",
+  },
+  description:
+    "Portfolio of Zeeshan, a Frontend Web Developer crafting modern digital experiences with React, Next.js, and Framer Motion.",
+  keywords: [
+    "Web Developer",
+    "Frontend",
+    "React",
+    "Next.js",
+    "Framer Motion",
+    "Portfolio",
+    "Pakistan",
+  ],
+  authors: [{ name: "Zeeshan Ahmad" }],
+  creator: "Zeeshan Ahmad",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "Zeeshan Portfolio",
+    title: "Zeeshan | Frontend Web Developer",
+    description:
+      "Portfolio of Zeeshan, a Frontend Web Developer crafting modern digital experiences.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 512,
+        height: 512,
+        alt: "Zeeshan Portfolio",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Zeeshan | Frontend Web Developer",
+    description:
+      "Portfolio of Zeeshan, a Frontend Web Developer crafting modern digital experiences.",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
-// Viewport settings for dark mode consistency
 export const viewport = {
-  themeColor: "#050505",
+  themeColor: "#040a06",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`${spaceGrotesk.variable} antialiased`}
       >
-        {/* Cursor stays outside SmoothScroll to prevent coordinate desync */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[99999] focus:rounded-xl focus:bg-[#4E8F63] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-none"
+        >
+          Skip to main content
+        </a>
+
         <CustomCursor />
 
         <SmoothScroll>
           <GlobalBackground />
-          {/* Scroll progress and Navbar */}
           <ScrollProgress />
-          {/* Semantic main wrapper for page content */}
-          <main className="relative z-10">
+          <main id="main-content" className="relative z-10">
             {children}
           </main>
         </SmoothScroll>

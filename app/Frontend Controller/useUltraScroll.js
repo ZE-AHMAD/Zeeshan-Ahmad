@@ -34,9 +34,10 @@ export function useUltraScroll() {
     };
 
     const animate = () => {
-      // smooth interpolation (physics feel)
-      data.current.progress +=
-        (data.current.target - data.current.progress) * 0.08;
+      if (!document.hidden) {
+        data.current.progress +=
+          (data.current.target - data.current.progress) * 0.08;
+      }
 
       rafId = requestAnimationFrame(animate);
     };
